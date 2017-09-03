@@ -26,12 +26,14 @@
 	PDFJS.getDocument('../index.pdf').then(pdf=>{
 		var numPages = pdf.numPages;
 		var start = 1;
-		renderPage(pdf, numPages, start);
+		renderPageAsync(pdf, numPages, start);
 	});
 	
 	function renderPage(pdf, numPages, current){
-		console.log("renderPage")
+		console.log("renderPage");
 		pdf.getPage(current++).then(page=>{
+			//console.log('page', page);
+			//page.getTextContent().then(v=>console.log(v));
       		var scale = 1.5;
       		var viewport = page.getViewport(scale);
       		// Prepare canvas using PDF page dimensions.
@@ -52,6 +54,31 @@
       		//next
       		if(current<=numPages)return renderPage(pdf, numPages, current);
 		});
+	}
+	
+	async function renderPageAsync(pdf, numPages, current){
+		console.log("renderPage async");
+		for(let i=1; i<=numPages; i++){
+			// page
+			let page = await pdf.getPage(i);
+			
+      		let scale = 1.5;
+      		let viewport = page.getViewport(scale);
+      		// Prepare canvas using PDF page dimensions.
+      		let canvas = document.createElement("canvas");
+      		let context = canvas.getContext('2d');
+      		document.body.appendChild(canvas);
+      		
+      		canvas.height = viewport.height;
+      		canvas.width = viewport.width;
+
+      		// Render PDF page into canvas context.
+      		let renderContext = {
+        			canvasContext: context,
+        			viewport: viewport
+      		};
+      		page.render(renderContext);
+		}
 	}
 
     
