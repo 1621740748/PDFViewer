@@ -1,0 +1,2 @@
+# PDFViewer
+在前端显示PDF文件，针对PDFObject库不支持的浏览器可以使用Canvas绘制PDF文件内容
